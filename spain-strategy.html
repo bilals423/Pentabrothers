@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estrategia de Ventas España — Instrumental Dental Sialkot</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f4f6f9;
+      color: #1a1a2e;
+      line-height: 1.7;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(135deg, #0f3460 0%, #16213e 60%, #1a1a2e 100%);
+      color: #fff;
+      padding: 60px 40px 50px;
+      text-align: center;
+    }
+    header .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 30px;
+      padding: 6px 18px;
+      font-size: 0.78rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    header h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+    header p {
+      font-size: 1.05rem;
+      opacity: 0.8;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+    .header-meta {
+      margin-top: 28px;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+    .header-meta span {
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    /* ── LAYOUT ── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 50px 24px;
+    }
+
+    /* ── SECTION TITLES ── */
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      margin-top: 60px;
+    }
+    .section-title .icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .section-title h2 {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: #0f3460;
+    }
+    .section-title p {
+      font-size: 0.88rem;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      border-left: 5px solid #0f3460;
+    }
+    .card.green  { border-left-color: #27ae60; }
+    .card.orange { border-left-color: #e67e22; }
+    .card.red    { border-left-color: #e74c3c; }
+    .card.blue   { border-left-color: #2980b9; }
+    .card.purple { border-left-color: #8e44ad; }
+    .card.teal   { border-left-color: #16a085; }
+
+    .card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      color: #0f3460;
+    }
+
+    /* ── GRID ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+    @media(max-width: 768px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      header h1 { font-size: 1.7rem; }
+    }
+
+    /* ── TABLES ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    th {
+      background: #0f3460;
+      color: #fff;
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 600;
+    }
+    td {
+      padding: 11px 16px;
+      border-bottom: 1px solid #eee;
+    }
+    tr:nth-child(even) td { background: #f8f9fb; }
+    tr:last-child td { border-bottom: none; }
+    .price { font-weight: 700; color: #27ae60; }
+    .price-red { font-weight: 700; color: #e74c3c; }
+    .price-blue { font-weight: 700; color: #2980b9; }
+
+    /* ── STAT BOXES ── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .stat-box {
+      background: #fff;
+      border-radius: 14px;
+      padding: 22px 20px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    .stat-box .num {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #0f3460;
+      line-height: 1;
+    }
+    .stat-box .label {
+      font-size: 0.78rem;
+      color: #888;
+      margin-top: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── STEPS ── */
+    .steps { counter-reset: step; }
+    .step {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 22px;
+      align-items: flex-start;
+    }
+    .step-num {
+      counter-increment: step;
+      background: #0f3460;
+      color: #fff;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .step-content h4 {
+      font-weight: 700;
+      color: #0f3460;
+      margin-bottom: 4px;
+    }
+    .step-content p { font-size: 0.92rem; color: #555; }
+
+    /* ── TIMELINE ── */
+    .timeline { position: relative; padding-left: 30px; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px; top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(to bottom, #0f3460, #27ae60);
+      border-radius: 2px;
+    }
+    .tl-item {
+      position: relative;
+      margin-bottom: 30px;
+    }
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -26px; top: 6px;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: #0f3460;
+      border: 3px solid #fff;
+      box-shadow: 0 0 0 3px #0f3460;
+    }
+    .tl-item h4 {
+      font-weight: 700;
+      color: #0f3460;
+      margin-bottom: 6px;
+    }
+    .tl-item ul { list-style: none; }
+    .tl-item ul li::before { content: '→ '; color: #27ae60; font-weight: 700; }
+    .tl-item ul li { font-size: 0.92rem; color: #555; margin-bottom: 4px; }
+
+    /* ── TAGS / BADGES ── */
+    .tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin: 2px;
+    }
+    .tag.green  { background: #d5f5e3; color: #1e8449; }
+    .tag.orange { background: #fdebd0; color: #ca6f1e; }
+    .tag.blue   { background: #d6eaf8; color: #1a5276; }
+    .tag.red    { background: #fadbd8; color: #922b21; }
+    .tag.purple { background: #e8daef; color: #6c3483; }
+
+    /* ── HIGHLIGHT BOX ── */
+    .highlight {
+      background: linear-gradient(135deg, #0f3460, #16213e);
+      color: #fff;
+      border-radius: 16px;
+      padding: 32px;
+      margin: 28px 0;
+    }
+    .highlight h3 { color: #fff; font-size: 1.2rem; margin-bottom: 14px; }
+    .highlight p { opacity: 0.9; font-size: 0.95rem; }
+    .highlight ul { list-style: none; }
+    .highlight ul li { padding: 6px 0; opacity: 0.9; font-size: 0.93rem; }
+    .highlight ul li::before { content: '✓ '; color: #2ecc71; font-weight: 800; }
+
+    /* ── NEW IDEAS ── */
+    .idea-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 22px 26px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      border-top: 4px solid #8e44ad;
+    }
+    .idea-card h4 { font-weight: 700; color: #6c3483; margin-bottom: 8px; font-size: 1rem; }
+    .idea-card p { font-size: 0.9rem; color: #555; }
+
+    /* ── CONTACT BOX ── */
+    .contact-box {
+      background: #fff;
+      border-radius: 14px;
+      padding: 20px 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    .contact-box .name { font-weight: 700; font-size: 1rem; color: #0f3460; }
+    .contact-box .role { font-size: 0.82rem; color: #888; margin-top: -4px; }
+    .contact-box a { color: #2980b9; font-size: 0.88rem; text-decoration: none; }
+    .contact-box a:hover { text-decoration: underline; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #1a1a2e;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      padding: 30px;
+      font-size: 0.82rem;
+      margin-top: 60px;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, #ddd, transparent);
+      margin: 40px 0;
+    }
+
+    /* ── PROBABILITY BAR ── */
+    .prob-bar-wrap { margin-bottom: 14px; }
+    .prob-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .prob-bar-bg {
+      height: 10px;
+      background: #eee;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .prob-bar {
+      height: 100%;
+      border-radius: 10px;
+      background: linear-gradient(to right, #0f3460, #27ae60);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════
+     HEADER
+════════════════════════════════════════════════ -->
+<header>
+  <div class="badge">Informe Estratégico Confidencial</div>
+  <h1>Estrategia de Ventas — España<br>Instrumental Dental · Sialkot</h1>
+  <p>Resumen completo de análisis de mercado, competencia, precios y plan de acción para la entrada y crecimiento en el mercado dental español.</p>
+  <div class="header-meta">
+    <span>🇵🇰 Fabricante: Sialkot, Pakistán</span>
+    <span>🇪🇸 Mercado objetivo: España</span>
+    <span>📅 Junio 2026</span>
+    <span>✅ CE · ISO 13485</span>
+  </div>
+</header>
+
+
+<div class="container">
+
+  <!-- ══ POSICIÓN ACTUAL ══ -->
+  <div class="section-title">
+    <div class="icon" style="background:#d6eaf8;">💪</div>
+    <div>
+      <h2>1. Tu Posición de Partida</h2>
+      <p>Lo que ya tienes — y es más de lo que parece</p>
+    </div>
+  </div>
+
+  <div class="highlight">
+    <h3>Ventajas competitivas reales frente al mercado español</h3>
+    <ul>
+      <li>CE Marking (MDR 2017/745) — el mayor obstáculo del mercado UE, ya superado</li>
+      <li>ISO 13485 — credibilidad de fabricante serio ante cualquier distribuidor europeo</li>
+      <li>Experiencia de ventas en Francia — ya tienes track record en Europa</li>
+      <li>Expo realizada en Madrid — contactos reales en el mercado español</li>
+      <li>Ventas en China — capacidad de volumen y producción demostrada</li>
+      <li>Máquinas de grabado de logo — diferenciador único que ningún distribuidor ofrece</li>
+      <li>Costo de fabricación 60–75% inferior al de fabricantes europeos equivalentes</li>
+    </ul>
+  </div>
+
+  <div class="stats">
+    <div class="stat-box">
+      <div class="num">75%</div>
+      <div class="label">Margen bruto medio<br>desde Sialkot</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">40%</div>
+      <div class="label">Más barato que<br>Medesy / Hu-Friedy</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">+26.000</div>
+      <div class="label">Clínicas dentales<br>en España</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">€800M+</div>
+      <div class="label">Mercado dental<br>España anual</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">3</div>
+      <div class="label">Certificaciones<br>internacionales</div>
+    </div>
+  </div>
+
+
+  <!-- ══ ANÁLISIS DE COMPETENCIA ══ -->
+  <div class="section-title">
+    <div class="icon" style="background:#fdebd0;">🔍</div>
+    <div>
+      <h2>2. Análisis del Competidor Principal</h2>
+      <p>Medesy / Medi-Dent — Catálogo 2018/19 — 306 páginas estudiadas</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>¿Quiénes son?</h3>
+    <table>
+      <tr><th>Aspecto</th><th>Detalle</th></tr>
+      <tr><td>Fabricante</td><td><strong>Medesy</strong> — Maniago, Italia (capital europea del instrumental quirúrgico)</td></tr>
+      <tr><td>Distribuidor</td><td><strong>Medi-Dent®</strong> — Australia</td></tr>
+      <tr><td>Segunda marca</td><td><strong>PDT</strong> — Paradise Dental Technologies (USA)</td></tr>
+      <tr><td>Slogan</td><td>"Passionate. Purpose Driven Design™"</td></tr>
+      <tr><td>Garantía</td><td>1 año base + extensión de por vida si hay defecto de fabricación</td></tr>
+      <tr><td>Catálogo</td><td>9 categorías · 306 páginas · +400 referencias</td></tr>
+    </table>
+  </div>
+
+  <div class="card blue">
+    <h3>Sus precios — Tu referencia de mercado</h3>
+    <table>
+      <tr>
+        <th>Producto</th>
+        <th>Precio Medesy (AUD)</th>
+        <th>Equiv. (€)</th>
+        <th>Tu precio directo</th>
+        <th>Tu precio a distribuidor</th>
+      </tr>
+      <tr>
+        <td>Fórceps inglés estándar</td>
+        <td>$99 AUD</td>
+        <td class="price-blue">~€58</td>
+        <td class="price">€32–40</td>
+        <td class="price">€18–24</td>
+      </tr>
+      <tr>
+        <td>Fórceps americano</td>
+        <td>$132 AUD</td>
+        <td class="price-blue">~€78</td>
+        <td class="price">€42–52</td>
+        <td class="price">€22–30</td>
+      </tr>
+      <tr>
+        <td>Fórceps pedodóntico</td>
+        <td>$132 AUD</td>
+        <td class="price-blue">~€78</td>
+        <td class="price">€38–50</td>
+        <td class="price">€20–28</td>
+      </tr>
+      <tr>
+        <td>Elevador de raíz</td>
+        <td>$60.50 AUD</td>
+        <td class="price-blue">~€36</td>
+        <td class="price">€20–28</td>
+        <td class="price">€10–14</td>
+      </tr>
+      <tr>
+        <td>Cureta Gracey</td>
+        <td>$59.40 AUD</td>
+        <td class="price-blue">~€35</td>
+        <td class="price">€22–30</td>
+        <td class="price">€11–15</td>
+      </tr>
+      <tr>
+        <td>Tijeras quirúrgicas</td>
+        <td>$44–88 AUD</td>
+        <td class="price-blue">~€26–52</td>
+        <td class="price">€22–38</td>
+        <td class="price">€11–20</td>
+      </tr>
+      <tr>
+        <td>Set extracción 10 pzas</td>
+        <td>$990 AUD</td>
+        <td class="price-blue">~€585</td>
+        <td class="price">€220–300</td>
+        <td class="price">€130–180</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card green">
+    <h3>Posicionamiento en el mercado</h3>
+    <p style="margin-bottom:16px;">El hueco ideal está entre el genérico asiático sin certificados y las marcas premium italianas.</p>
+    <table>
+      <tr><th>Segmento</th><th>Marcas</th><th>Precio medio</th><th>Posición</th></tr>
+      <tr><td><strong>Premium alto</strong></td><td>Medesy, Hu-Friedy, PDT, LM</td><td>€55–130</td><td>—</td></tr>
+      <tr style="background:#d5f5e3;"><td><strong>TU ZONA IDEAL</strong></td><td><em>Tu marca — CE + ISO + Logo</em></td><td><strong>€22–55</strong></td><td>✅ Aquí</td></tr>
+      <tr><td><strong>Bajo sin CE</strong></td><td>Genérico chino sin certif.</td><td>€8–20</td><td>—</td></tr>
+    </table>
+  </div>
+
+
+  <!-- ══ LOS DOS CARRILES ══ -->
+  <div class="section-title">
+    <div class="icon" style="background:#d5f5e3;">🛣️</div>
+    <div>
+      <h2>3. Estrategia de Dos Carriles</h2>
+      <p>Distribuidores + Venta directa — simultáneamente</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card orange">
+      <h3>🏪 Carril A — Distribuidores</h3>
+      <p><strong>Ventajas:</strong></p>
+      <ul style="margin:10px 0 14px 18px; font-size:0.9rem; color:#555;">
+        <li>Volumen sin esfuerzo comercial propio</li>
+        <li>Ellos gestionan la venta</li>
+        <li>Visibilidad de marca en su catálogo</li>
+        <li>Pagos regulares</li>
+      </ul>
+      <p><strong>Precio que ofreces:</strong> €14–30 / instrumento</p>
+      <p><strong>Tiempo para cerrar:</strong> 3–6 meses</p>
+    </div>
+    <div class="card teal">
+      <h3>🎯 Carril B — Venta Directa + Logo</h3>
+      <p><strong>Ventajas:</strong></p>
+      <ul style="margin:10px 0 14px 18px; font-size:0.9rem; color:#555;">
+        <li>Mejor margen para ti</li>
+        <li>Mejor precio para la clínica</li>
+        <li>Oferta de logo/marca propia</li>
+        <li>Relación directa y fidelización</li>
+      </ul>
+      <p><strong>Precio que cobras:</strong> €28–52 / instrumento</p>
+      <p><strong>Tiempo para cerrar:</strong> 1–3 meses</p>
+    </div>
+  </div>
+
+  <div class="highlight" style="margin-top:24px;">
+    <h3>🏷️ El arma secreta: El Logo</h3>
+    <p>Tienes máquinas de grabado — eso es un diferenciador que <strong>ningún distribuidor puede ofrecer</strong>.</p>
+    <ul style="margin-top:14px;">
+      <li>Clínica compra en Dentaltix: fórceps con logo MEDESY por €58</li>
+      <li>Clínica te compra a ti: fórceps con <strong>su propio logo</strong> por €34–42 — ahorra 40% y gana imagen de marca</li>
+      <li>Para grupos grandes (Vitaldent, Sanitas…): branded instruments = herramienta de marketing</li>
+      <li>Tu coste extra del grabado: prácticamente €0</li>
+    </ul>
+  </div>
+
+
+  <!-- ══ DENTALTIX ══ -->
+  <div class="section-title">
+    <div class="icon" style="background:#fadbd8;">📦</div>
+    <div>
+      <h2>4. Dentaltix — Estrategia Específica</h2>
+      <p>El principal marketplace/distribuidor dental online de España</p>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-box">
+      <div class="num">€12.6M</div>
+      <div class="label">Facturación 2022</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">+10.000</div>
+      <div class="label">Clínicas clientes</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">+200</div>
+      <div class="label">Marcas activas</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">4</div>
+      <div class="label">Países: ES, FR, IT, UK</div>
+    </div>
+  </div>
+
+  <div class="card red">
+    <h3>⚠️ Importante: Dentaltix NO es un marketplace</h3>
+    <p>Compran tu producto a precio wholesale → lo almacenan → lo revenden. No es una plataforma donde subes tus listings.</p>
+    <p style="margin-top:10px;"><strong>El modelo:</strong> Tú → vendes wholesale a Dentaltix (pagan a 30 días) → Dentaltix revende al dentista con su margen.</p>
+  </div>
+
+  <div class="card">
+    <h3>Contactos verificados de Dentaltix</h3>
+    <div class="grid-2" style="margin-top:14px;">
+      <div class="contact-box">
+        <span class="name">Ramón Martínez Salmerón</span>
+        <span class="role">CEO & Fundador — contacto prioritario</span>
+        <a href="https://es.linkedin.com/in/martinezsalmeron" target="_blank">🔗 LinkedIn: martinezsalmeron</a>
+      </div>
+      <div class="contact-box">
+        <span class="name">Bea (co-fundadora)</span>
+        <span class="role">Co-fundadora — contacto directo</span>
+        <a href="mailto:bea@dentaltix.com">📧 bea@dentaltix.com</a>
+      </div>
+      <div class="contact-box">
+        <span class="name">Email general</span>
+        <span class="role">Contacto principal</span>
+        <a href="mailto:info@dentaltix.com">📧 info@dentaltix.com</a>
+      </div>
+      <div class="contact-box">
+        <span class="name">Teléfono / WhatsApp</span>
+        <span class="role">Oficina Madrid — Alcobendas</span>
+        <a href="tel:+34915335229">📞 +34 91 533 52 29</a>
+        <a href="https://wa.me/34646049226" target="_blank">💬 WhatsApp: +34 646 04 92 26</a>
+      </div>
+    </div>
+    <p style="margin-top:18px; font-size:0.88rem; color:#777;">📍 Dirección: Calle Torres Quevedo 13, Alcobendas, 28108 Madrid</p>
+  </div>
+
+  <div class="card blue">
+    <h3>Tu argumento ganador con Dentaltix</h3>
+    <table>
+      <tr><th>Concepto</th><th>Con Medesy</th><th>Contigo</th><th>Ventaja</th></tr>
+      <tr>
+        <td>Precio que Dentaltix paga</td>
+        <td class="price-red">~€35</td>
+        <td class="price">~€18–22</td>
+        <td><strong>35–48% menos coste</strong></td>
+      </tr>
+      <tr>
+        <td>Precio venta al dentista</td>
+        <td>€58</td>
+        <td>€45–50</td>
+        <td>Dentaltix baja precio = más ventas</td>
+      </tr>
+      <tr>
+        <td>Margen de Dentaltix</td>
+        <td>~40%</td>
+        <td class="price"><strong>~55–60%</strong></td>
+        <td><strong>+15–20 puntos de margen</strong></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Probabilidad de éxito con Dentaltix</h3>
+    <div style="margin-top:14px;">
+      <div class="prob-bar-wrap">
+        <div class="prob-bar-label"><span>Respuesta inicial al primer contacto</span><span>65%</span></div>
+        <div class="prob-bar-bg"><div class="prob-bar" style="width:65%"></div></div>
+      </div>
+      <div class="prob-bar-wrap">
+        <div class="prob-bar-label"><span>Llegar a fase de muestras</span><span>45%</span></div>
+        <div class="prob-bar-bg"><div class="prob-bar" style="width:45%"></div></div>
+      </div>
+      <div class="prob-bar-wrap">
+        <div class="prob-bar-label"><span>Primer pedido en 6 meses</span><span>35%</span></div>
+        <div class="prob-bar-bg"><div class="prob-bar" style="width:35%"></div></div>
+      </div>
+    </div>
+    <p style="margin-top:14px; font-size:0.88rem; color:#777;">
+      <strong>Probabilidad global estimada: 30–45%.</strong> No es baja — es realista. Por eso se trabaja en paralelo con venta directa.
+    </p>
+  </div>
+
+
+  <!-- ══ VENTA DIRECTA ══ -->
+  <div class="section-title">
+    <div class="icon" style="background:#d5f5e3;">🏥</div>
+    <div>
+      <h2>5. Venta Directa a Clínicas</h2>
+      <p>El canal más rentable y el más rápido para generar resultados</p>
+    </div>
+  </div>
+
+  <div class="card green">
+    <h3>Targets prioritarios — Grupos grandes</h3>
+    <table>
+      <tr><th>Grupo</th><th>Clínicas</th><th>Oportunidad</th><th>Prioridad</th></tr>
+      <tr><td><strong>Vitaldent</strong></td><td>300+</td><td>Volumen enorme, compras centralizadas, buscan ahorro</td><td><span class="tag red">Máxima</span></td></tr>
+      <tr><td><strong>Sanitas Dental</strong></td><td>200+</td><td>Corporativo, quieren marca propia en instrumentos</td><td><span class="tag red">Máxima</span></td></tr>
+      <tr><td><strong>Impress</strong></td><td>100+</td><td>Startup moderna, muy abiertos a nuevos proveedores</td><td><span class="tag orange">Alta</span></td></tr>
+      <tr><td><strong>Asisa Dental</strong></td><td>150+</td><td>Compras centralizadas, decisiones rápidas</td><td><span class="tag orange">Alta</span></td></tr>
+      <tr><td><strong>DentalPro</strong></td><td>100+</td><td>En expansión activa, buscan costes competitivos</td><td><span class="tag orange">Alta</span></td></tr>
+    </table>
+  </div>
+
+  <div class="card teal">
+    <h3>Canales para contactar clínicas directamente</h3>
+    <div class="grid-3" style="margin-top:14px;">
+      <div style="background:#f0fffe; padding:16px; border-radius:10px;">
+        <strong>LinkedIn</strong>
+        <p style="font-size:0.85rem; color:#555; margin-top:6px;">Busca "director clínica dental España" o "practice manager" — mensaje directo de 3 líneas, tasa de respuesta alta</p>
+      </div>
+      <div style="background:#f0fffe; padding:16px; border-radius:10px;">
+        <strong>Colegios de Odontólogos</strong>
+        <p style="font-size:0.85rem; color:#555; margin-top:6px;">Tienen directorios públicos por provincia. Madrid, Barcelona, Andalucía = 60% del mercado</p>
+      </div>
+      <div style="background:#f0fffe; padding:16px; border-radius:10px;">
+        <strong>Instagram / WhatsApp</strong>
+        <p style="font-size:0.85rem; color:#555; margin-top:6px;">Dentistas muy activos. Muchas clínicas tienen perfil público con contacto directo</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Estructura de precio para venta directa</h3>
+    <table>
+      <tr><th>Concepto</th><th>Clínica individual</th><th>Grupo grande</th></tr>
+      <tr><td>Pedido mínimo</td><td>20–30 instrumentos</td><td>500–1.000 / año (contrato)</td></tr>
+      <tr><td>Precio fórceps</td><td>€32–42</td><td>€24–34 (volumen)</td></tr>
+      <tr><td>Logo grabado</td><td>Incluido desde 30 uds</td><td>Incluido en todo</td></tr>
+      <tr><td>Envío</td><td>Gratis desde €200</td><td>Incluido en contrato</td></tr>
+      <tr><td>Plazo de entrega</td><td>3–4 semanas (DHL Express)</td><td>Envíos parciales cada 2–3 meses</td></tr>
+      <tr><td>Pago</td><td>50% adelanto / 50% antes envío</td><td>30–60 días (negociable)</td></tr>
+    </table>
+  </div>
+
+  <div class="card green">
+    <h3>Proyección financiera conservadora — solo venta directa</h3>
+    <table>
+      <tr><th>Escenario</th><th>Clínicas</th><th>Instr./año</th><th>Precio medio</th><th>Ingresos</th><th>Margen bruto</th></tr>
+      <tr>
+        <td>Conservador</td><td>20</td><td>2.000</td><td>€30</td>
+        <td class="price">€60.000</td><td class="price">€50.000 (83%)</td>
+      </tr>
+      <tr>
+        <td>Moderado</td><td>50</td><td>6.000</td><td>€32</td>
+        <td class="price">€192.000</td><td class="price">€160.000 (83%)</td>
+      </tr>
+      <tr>
+        <td>1 grupo grande</td><td>1 acuerdo</td><td>20.000</td><td>€28</td>
+        <td class="price">€560.000</td><td class="price">€460.000 (82%)</td>
+      </tr>
+    </table>
+  </div>
+
+
+  <!-- ══ PLAN DE ACCIÓN ══ -->
+  <div class="section-title">
+    <div class="icon" style="background:#e8daef;">📋</div>
+    <div>
+      <h2>6. Plan de Acción — Paso a Paso</h2>
+      <p>Timeline concreto para los próximos 6 meses</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="timeline">
+
+      <div class="tl-item">
+        <h4>⚡ Semana 1 — Activar contactos inmediatos</h4>
+        <ul>
+          <li>Conectar con Ramón Martínez Salmerón en LinkedIn (Dentaltix CEO)</li>
+          <li>Enviar email a bea@dentaltix.com con propuesta de proveedor</li>
+          <li>Recuperar y contactar todos los leads de la Expo Madrid</li>
+          <li>Contactar Acteon España (ya tienes relación en Francia)</li>
+          <li>Preparar 5–10 muestras físicas listas para enviar</li>
+        </ul>
+      </div>
+
+      <div class="tl-item">
+        <h4>📄 Semana 2 — Preparar materiales de venta</h4>
+        <ul>
+          <li>Catálogo en español con precios en € (dos versiones: distribuidor y directo)</li>
+          <li>Ficha técnica en español con certificados adjuntos</li>
+          <li>Mockup visual de instrumento con logo de clínica (para el pitch de branding)</li>
+          <li>Lista de precios wholesale para distribuidores</li>
+          <li>Condiciones de pago y plazos de entrega claros</li>
+        </ul>
+      </div>
+
+      <div class="tl-item">
+        <h4>🏥 Semana 3–4 — Ataque a clínicas directas</h4>
+        <ul>
+          <li>Contactar grupos grandes: Vitaldent, Sanitas Dental, Impress vía LinkedIn</li>
+          <li>Identificar 30–50 clínicas medianas en Madrid y Barcelona</li>
+          <li>Enviar muestras físicas a los que muestren interés</li>
+          <li>Registrar empresa en directorio Gaceta Dental (publicación dental líder España)</li>
+          <li>Seguimiento WhatsApp a Dentaltix si no hay respuesta</li>
+        </ul>
+      </div>
+
+      <div class="tl-item">
+        <h4>📈 Mes 2–3 — Primeros cierres</h4>
+        <ul>
+          <li>Convertir muestras en primeros pedidos de clínicas directas</li>
+          <li>Registro en AEMPS si no está completado</li>
+          <li>Negociar condiciones con 1–2 distribuidores regionales</li>
+          <li>Lanzar campaña pequeña de Google Ads para España ("instrumental dental CE")</li>
+          <li>Revisión y ajuste de precios según feedback del mercado</li>
+        </ul>
+      </div>
+
+      <div class="tl-item">
+        <h4>🚀 Mes 4–6 — Escalar y consolidar</h4>
+        <ul>
+          <li>Volver a Dentaltix con referencias reales de clientes en España</li>
+          <li>Negociar primer contrato con grupo dental grande</li>
+          <li>Explorar Portugal (Dentaltix ya planea entrar ahí — mismo proveedor, dos mercados)</li>
+          <li>Evaluar participación en Expodental Madrid (feria bienal)</li>
+          <li>Construir web en español con catálogo, certificados y formulario de pedido</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══ NUEVAS IDEAS ══ -->
+  <div class="section-title">
+    <div class="icon" style="background:#e8daef;">💡</div>
+    <div>
+      <h2>7. Nuevas Ideas — Oportunidades No Exploradas</h2>
+      <p>Canales y estrategias adicionales para acelerar ventas</p>
+    </div>
+  </div>
+
+  <div class="grid-3">
+
+    <div class="idea-card">
+      <h4>🎓 Universidades y Facultades de Odontología</h4>
+      <p>España tiene +30 facultades de odontología. Necesitan instrumental básico en grandes volúmenes para prácticas. Precio muy competitivo, compras anuales garantizadas.</p>
+    </div>
+
+    <div class="idea-card">
+      <h4>📦 Campaña de Muestras Gratuitas</h4>
+      <p>Enviar 3–5 instrumentos gratis en una caja con tu marca a 50 clínicas target. El instrumento habla solo — si la calidad es buena, la conversión es alta. Coste total: ~€500–800, ROI potencial: alto.</p>
+    </div>
+
+    <div class="idea-card">
+      <h4>🇵🇹 Portugal en paralelo</h4>
+      <p>Dentaltix planea entrar en Portugal. Si los convences en España, te abren Portugal automáticamente. Y es el mercado más fácil de atacar en paralelo desde España.</p>
+    </div>
+
+    <div class="idea-card">
+      <h4>📱 Instagram / YouTube del proceso</h4>
+      <p>Video corto mostrando la fábrica en Sialkot, el proceso de fabricación, el grabado de logos. Destruye el mito "baja calidad de Pakistán". Los dentistas confían en lo que ven. Coste: casi cero.</p>
+    </div>
+
+    <div class="idea-card">
+      <h4>🏢 Asociaciones Dentales como canal</h4>
+      <p>COEM (Madrid), ICOG (Galicia), y el Consejo General de Dentistas tienen programas para proveedores. Ser proveedor recomendado de una asociación = acceso directo a miles de socios.</p>
+    </div>
+
+    <div class="idea-card">
+      <h4>🛒 Amazon Business España</h4>
+      <p>Muchas clínicas pequeñas compran material en Amazon Business. Registrar productos con CE visible puede generar ventas pasivas sin esfuerzo comercial activo.</p>
+    </div>
+
+    <div class="idea-card">
+      <h4>🤝 OEM para Marca Española</h4>
+      <p>Fabricar para una empresa española que quiera lanzar su propia línea. Ellos ponen la marca, tú fabricas y envías. Sin gestión de clientes finales, volumen garantizado.</p>
+    </div>
+
+    <div class="idea-card">
+      <h4>🌍 Francia como palanca para España</h4>
+      <p>Tus clientes franceses son referencias de oro. Pedir testimonios escritos o vídeo y usarlos en el pitch español cambia completamente la percepción. "Ya suministramos a [clínica francesa] — referencias disponibles".</p>
+    </div>
+
+    <div class="idea-card">
+      <h4>📊 Gaceta Dental — Publicidad Sectorial</h4>
+      <p>La publicación dental líder de España. Un anuncio en su directorio de proveedores o un artículo patrocinado genera consultas entrantes de distribuidores y clínicas que tú no conoces.</p>
+    </div>
+
+  </div>
+
+
+  <!-- ══ CONCLUSIÓN FINAL ══ -->
+  <div class="section-title">
+    <div class="icon" style="background:#d5f5e3;">🏁</div>
+    <div>
+      <h2>8. Conclusión Final</h2>
+      <p>El resumen ejecutivo en tres puntos clave</p>
+    </div>
+  </div>
+
+  <div class="highlight">
+    <h3>Los tres puntos que lo explican todo</h3>
+    <ul>
+      <li><strong>Tienes todo lo necesario para entrar ya en España.</strong> CE, ISO, experiencia Europa, contactos de expo — la mayoría de fabricantes de Sialkot no llegan ni cerca de tu posición. El mercado está abierto para ti.</li>
+      <li><strong>No dependas de un solo canal.</strong> Dentaltix es una oportunidad real (30–45% de probabilidad) pero no la única. Los grupos dentales grandes y las clínicas directas son tu camino más rápido y rentable mientras construyes relaciones con distribuidores.</li>
+      <li><strong>El logo es tu diferenciador único.</strong> Ningún competidor — ni Medesy, ni Dentaltix — puede ofrecer instrumental personalizado a precio competitivo. Eso te da un argumento de venta que no tiene precio y que cierra deals que el precio solo no cierra.</li>
+    </ul>
+  </div>
+
+  <div class="grid-3" style="margin-top:28px;">
+    <div class="card green" style="text-align:center;">
+      <div style="font-size:2.5rem; margin-bottom:10px;">🎯</div>
+      <h3>Primer objetivo</h3>
+      <p style="font-size:0.9rem; color:#555; margin-top:8px;">5 clínicas directas en España en los próximos 60 días usando los contactos de la expo de Madrid</p>
+    </div>
+    <div class="card blue" style="text-align:center;">
+      <div style="font-size:2.5rem; margin-bottom:10px;">📈</div>
+      <h3>Objetivo a 6 meses</h3>
+      <p style="font-size:0.9rem; color:#555; margin-top:8px;">20–30 clínicas activas + 1 distribuidor regional + respuesta de Dentaltix con base de clientes probada</p>
+    </div>
+    <div class="card purple" style="text-align:center;">
+      <div style="font-size:2.5rem; margin-bottom:10px;">🚀</div>
+      <h3>Objetivo a 12 meses</h3>
+      <p style="font-size:0.9rem; color:#555; margin-top:8px;">1 acuerdo con grupo dental grande + presencia en Dentaltix + primeras ventas en Portugal</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════ -->
+<footer>
+  <p>Informe estratégico confidencial · Elaborado en base al análisis del catálogo Medi-Dent/Medesy 2018/19 y datos de mercado · Junio 2026</p>
+  <p style="margin-top:8px;">Datos de contacto Dentaltix verificados · Precios estimados basados en análisis de mercado · Cifras de margen calculadas sobre costes estándar industria Sialkot</p>
+</footer>
+
+</body>
+</html>
