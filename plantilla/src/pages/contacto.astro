@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+import Contacto from '../components/Contacto.astro';
+import { SITE } from '../config';
+---
+<Base titulo="Contacto" descripcion={`Contacta con ${SITE.nombre}. Te respondemos lo antes posible.`}>
+  <section class="seccion">
+    <div class="contenedor">
+      <h1>Contacto</h1>
+      <p>
+        Escríbenos a <a href={`mailto:${SITE.contacto.email}`}>{SITE.contacto.email}</a>{' '}
+        o llámanos al <a href={`tel:${SITE.contacto.telefono.replace(/\s/g, '')}`}>{SITE.contacto.telefono}</a>.
+      </p>
+      <Contacto />
+    </div>
+  </section>
+</Base>

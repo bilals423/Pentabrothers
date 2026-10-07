@@ -1,0 +1,51 @@
+/* Colores y tipografía del cliente: cambia estas variables */
+:root {
+  --color-primario: #1f6feb;
+  --color-primario-oscuro: #1554b8;
+  --color-texto: #1a1a1a;
+  --color-suave: #5f6670;
+  --color-fondo: #ffffff;
+  --color-fondo-alt: #f4f6f8;
+  --fuente: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --radio: 10px;
+  --ancho: 1100px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: var(--fuente); color: var(--color-texto); background: var(--color-fondo); line-height: 1.6; }
+img { max-width: 100%; height: auto; display: block; }
+a { color: var(--color-primario); }
+h1, h2, h3 { line-height: 1.2; }
+
+.contenedor { width: min(100% - 2rem, var(--ancho)); margin-inline: auto; }
+.seccion { padding-block: clamp(3rem, 8vw, 6rem); }
+.seccion--alt { background: var(--color-fondo-alt); }
+
+.saltar { position: absolute; left: -999px; }
+.saltar:focus { left: 1rem; top: 1rem; background: #fff; padding: .5rem 1rem; z-index: 100; }
+
+.cabecera { position: sticky; top: 0; z-index: 50; background: rgb(255 255 255 / .95); backdrop-filter: blur(8px); border-bottom: 1px solid #e6e8eb; }
+.cabecera__dentro { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 64px; flex-wrap: wrap; }
+.logo { font-weight: 700; font-size: 1.15rem; color: var(--color-texto); text-decoration: none; }
+.menu { list-style: none; display: flex; gap: 1.25rem; margin: 0; padding: 0; flex-wrap: wrap; }
+.menu a { color: var(--color-suave); text-decoration: none; }
+.menu a:hover, .menu a[aria-current='page'] { color: var(--color-primario); }
+
+.boton { display: inline-block; background: var(--color-primario); color: #fff; padding: .8rem 1.5rem; border-radius: var(--radio); text-decoration: none; font-weight: 600; border: 0; font: inherit; cursor: pointer; }
+.boton:hover { background: var(--color-primario-oscuro); }
+
+.pie { border-top: 1px solid #e6e8eb; padding-block: 2rem; color: var(--color-suave); font-size: .9rem; }
+.pie__dentro { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.pie__dentro p { margin: 0; }
+
+.whatsapp { position: fixed; right: 1rem; bottom: 1rem; width: 56px; height: 56px; border-radius: 50%; background: #25d366; color: #fff; display: grid; place-items: center; box-shadow: 0 4px 14px rgb(0 0 0 / .2); }
+
+.rejilla { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.tarjeta { background: #fff; border: 1px solid #e6e8eb; border-radius: var(--radio); padding: 1.5rem; }
+
+.formulario { display: grid; gap: 1rem; max-width: 560px; }
+.formulario label { display: grid; gap: .35rem; font-weight: 500; }
+.formulario input, .formulario textarea { font: inherit; padding: .7rem .8rem; border: 1px solid #cfd4da; border-radius: var(--radio); }
+.formulario .trampa { position: absolute; left: -9999px; }
+.formulario__estado { min-height: 1.5em; }
+.legal { max-width: 760px; }

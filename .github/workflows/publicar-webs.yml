@@ -3,6 +3,7 @@
 #  - Push a otra rama → vista previa: https://<rama>.<nombre>.pages.dev
 # Secrets necesarios (Settings → Secrets and variables → Actions):
 #   CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID
+#   SUPABASE_URL, SUPABASE_ANON_KEY (opcionales: formulario de contacto)
 name: Publicar webs
 
 on:
@@ -55,9 +56,34 @@ jobs:
           if ! npx --yes wrangler@4 pages project list | grep -qE "(^|[[:space:]])${{ matrix.web }}([[:space:]]|$)"; then
             npx --yes wrangler@4 pages project create "${{ matrix.web }}" --production-branch=main
           fi
+      # Webs hechas con la plantilla (Astro u otra con package.json): se compilan antes
+      - name: Comprobar si hay que compilar
+        id: tipo
+        run: |
+          if [ -f "sites/${{ matrix.web }}/package.json" ]; then
+            echo "salida=sites/${{ matrix.web }}/dist" >> "$GITHUB_OUTPUT"
+            echo "compilar=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "salida=sites/${{ matrix.web }}" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-node@v4
+        if: steps.tipo.outputs.compilar
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: sites/${{ matrix.web }}/package-lock.json
+      - name: Compilar
+        if: steps.tipo.outputs.compilar
+        working-directory: sites/${{ matrix.web }}
+        env:
+          PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          npm ci
+          npm run build
       - name: Publicar
         run: |
-          npx --yes wrangler@4 pages deploy "sites/${{ matrix.web }}" \
+          npx --yes wrangler@4 pages deploy "${{ steps.tipo.outputs.salida }}" \
             --project-name="${{ matrix.web }}" \
             --branch="${{ github.ref_name }}" \
             --commit-dirty=true

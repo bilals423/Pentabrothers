@@ -1,0 +1,59 @@
+---
+import SEO from '../components/SEO.astro';
+import { SITE } from '../config';
+import '../styles/global.css';
+
+interface Props {
+  titulo?: string;
+  descripcion?: string;
+  imagen?: string;
+  noindex?: boolean;
+}
+
+const actual = Astro.url.pathname.replace(/\.html$/, '') || '/';
+const año = new Date().getFullYear();
+---
+<!doctype html>
+<html lang={SITE.idioma}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <SEO {...Astro.props} />
+  </head>
+  <body>
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
+    <header class="cabecera">
+      <div class="contenedor cabecera__dentro">
+        <a href="/" class="logo">{SITE.nombre}</a>
+        <nav aria-label="Principal">
+          <ul class="menu">
+            {SITE.menu.map((e) => (
+              <li><a href={e.href} aria-current={actual === e.href ? 'page' : undefined}>{e.texto}</a></li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="contenido">
+      <slot />
+    </main>
+
+    <footer class="pie">
+      <div class="contenedor pie__dentro">
+        <p>© {año} {SITE.nombre}</p>
+        <ul class="menu">
+          <li><a href="/aviso-legal">Aviso legal</a></li>
+          <li><a href="/privacidad">Privacidad</a></li>
+        </ul>
+      </div>
+    </footer>
+
+    {SITE.contacto.whatsapp && (
+      <a class="whatsapp" href={`https://wa.me/${SITE.contacto.whatsapp}`} target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
+        <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.3-.8-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.2-.3.3-.1.6.1.3.6 1.1 1.4 1.8 1 .9 1.8 1.1 2 1.3.3.1.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></svg>
+      </a>
+    )}
+  </body>
+</html>
