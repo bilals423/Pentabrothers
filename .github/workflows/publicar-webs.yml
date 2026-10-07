@@ -1,0 +1,63 @@
+# Publica en Cloudflare Pages cada web de sites/<nombre> que haya cambiado.
+#  - Push a main      → producción:   https://<nombre>.pages.dev
+#  - Push a otra rama → vista previa: https://<rama>.<nombre>.pages.dev
+# Secrets necesarios (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID
+name: Publicar webs
+
+on:
+  push:
+    paths:
+      - "sites/**"
+  workflow_dispatch:
+
+jobs:
+  detectar:
+    runs-on: ubuntu-latest
+    outputs:
+      webs: ${{ steps.cambios.outputs.webs }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: cambios
+        env:
+          ANTES: ${{ github.event.before }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] \
+             || [ -z "$ANTES" ] || [ "$ANTES" = "0000000000000000000000000000000000000000" ] \
+             || ! git cat-file -e "$ANTES" 2>/dev/null; then
+            # Publicación manual o rama nueva: todas las webs
+            nombres=$(find sites -mindepth 1 -maxdepth 1 -type d -printf '%f\n')
+          else
+            nombres=$(git diff --name-only "$ANTES" "$GITHUB_SHA" -- sites/ | cut -d/ -f2 | sort -u)
+          fi
+          # Solo carpetas que siguen existiendo
+          webs=$(for n in $nombres; do [ -d "sites/$n" ] && echo "$n"; done | jq -R . | jq -sc .)
+          echo "webs=$webs" >> "$GITHUB_OUTPUT"
+          echo "Webs a publicar: $webs"
+
+  publicar:
+    needs: detectar
+    if: needs.detectar.outputs.webs != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        web: ${{ fromJson(needs.detectar.outputs.webs) }}
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Crear el proyecto en Cloudflare si no existe
+        run: |
+          if ! npx --yes wrangler@4 pages project list | grep -qE "(^|[[:space:]])${{ matrix.web }}([[:space:]]|$)"; then
+            npx --yes wrangler@4 pages project create "${{ matrix.web }}" --production-branch=main
+          fi
+      - name: Publicar
+        run: |
+          npx --yes wrangler@4 pages deploy "sites/${{ matrix.web }}" \
+            --project-name="${{ matrix.web }}" \
+            --branch="${{ github.ref_name }}" \
+            --commit-dirty=true

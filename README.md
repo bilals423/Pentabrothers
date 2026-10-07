@@ -1,85 +1,51 @@
-# Servidor de la agencia — webs + automatizaciones
+# Webs de la agencia
 
-Un único servidor (VPS) donde viven **todas las webs de los clientes**, cada una con su dominio y HTTPS automático, más **n8n** para las automatizaciones. Todo se gestiona desde este repositorio: haces `git push` y el servidor se actualiza solo.
+Todas las webs de los clientes viven en este repositorio y se publican **gratis** en [Cloudflare Pages](https://pages.cloudflare.com) (HTTPS, CDN mundial, tráfico ilimitado y uso comercial permitido).
 
 ```
-sites/<cliente>/          ← los archivos de cada web (index.html, css, imágenes…)
-caddy/sites/<cliente>.caddy ← qué dominio(s) sirven esa web
-caddy/Caddyfile           ← configuración general (HTTPS, n8n, cabeceras)
-docker-compose.yml        ← Caddy (servidor web) + n8n (automatizaciones)
-scripts/                  ← instalar servidor, crear web nueva, backups
-.github/workflows/deploy.yml ← despliegue automático al hacer push a main
+sites/<cliente>/                      ← los archivos de cada web (index.html, css, imágenes…)
+scripts/nueva-web.sh                  ← crea la carpeta de una web nueva
+.github/workflows/publicar-webs.yml   ← publica automáticamente al hacer push
 ```
 
-## 1. Contratar el servidor
+**Cómo funciona:** cada carpeta de `sites/` es una web. Al hacer `git push`, GitHub publica solo las webs que han cambiado:
 
-Cualquier VPS con Ubuntu 24.04 sirve. Para empezar basta con 2 vCPU / 4 GB RAM (p. ej. Hetzner CX22 ≈ 4–5 €/mes, o DigitalOcean, Contabo, OVH…). Anota la **IP pública**.
-
-## 2. DNS
-
-En el proveedor de cada dominio crea registros **A** apuntando a la IP del servidor:
-
-| Registro | Apunta a |
+| Dónde haces push | Dónde se ve |
 |---|---|
-| `n8n.tuagencia.com` | IP del servidor |
-| `pentabrothers.tuagencia.com` (o el dominio real del cliente) | IP del servidor |
+| rama `main` | `https://<cliente>.pages.dev` (producción) |
+| cualquier otra rama | `https://<rama>.<cliente>.pages.dev` (vista previa para enseñar al cliente) |
 
-## 3. Instalar (una sola vez)
+> Si el nombre `<cliente>.pages.dev` ya lo usa otra persona en Cloudflare, te asignará uno parecido (p. ej. `cliente-abc.pages.dev`). Lo verás en el log de la publicación y en el panel de Cloudflare.
 
-Conéctate por SSH como root y ejecuta:
+## Configuración (una sola vez, ~5 minutos)
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/bilals423/Pentabrothers/main/scripts/instalar-servidor.sh \
-  | bash -s -- https://github.com/bilals423/Pentabrothers.git
-nano /opt/agencia/.env          # pon tu ACME_EMAIL y N8N_DOMAIN
-cd /opt/agencia && docker compose up -d
-```
-
-> Si el repositorio es privado, añade antes una *deploy key* (Settings → Deploy keys) o clona con un token.
-
-Esto instala Docker, abre el firewall (22, 80, 443), clona el repo en `/opt/agencia` y genera una clave de cifrado para n8n. En un minuto tendrás:
-
-- `https://n8n.tuagencia.com` → crea tu usuario administrador de n8n
-- `https://pentabrothers.tuagencia.com` → la web de Penta Brothers
-
-## 4. Despliegue automático con GitHub
-
-En GitHub → *Settings → Secrets and variables → Actions* añade:
-
-| Secret | Valor |
-|---|---|
-| `SERVER_HOST` | IP del servidor |
-| `SERVER_USER` | `root` (o el usuario con acceso a Docker) |
-| `SERVER_SSH_KEY` | clave privada SSH autorizada en el servidor |
-
-Desde ese momento, cada push a `main` hace `git pull` en el servidor y recarga Caddy, sin cortes.
+1. Crea una cuenta gratis en <https://dash.cloudflare.com/sign-up>.
+2. **Account ID:** en el panel de Cloudflare, menú *Workers & Pages* → aparece a la derecha como *Account ID*. Cópialo.
+3. **API token:** *My Profile → API Tokens → Create Token → Create Custom Token*, con el permiso **Account → Cloudflare Pages → Edit**. Cópialo.
+4. En GitHub → este repo → *Settings → Secrets and variables → Actions → New repository secret*, crea:
+   - `CLOUDFLARE_ACCOUNT_ID`
+   - `CLOUDFLARE_API_TOKEN`
+5. Ve a la pestaña *Actions → Publicar webs → Run workflow* para publicar todas las webs por primera vez.
 
 ## Añadir la web de un cliente nuevo
 
 ```bash
-scripts/nueva-web.sh panaderia-lopez panaderialopez.com www.panaderialopez.com
-# copia los archivos de la web a sites/panaderia-lopez/
+scripts/nueva-web.sh panaderia-lopez
+# copia los archivos de la web en sites/panaderia-lopez/
 git add . && git commit -m "Nueva web: panaderia-lopez" && git push
 ```
 
-Apunta el DNS del dominio a la IP del servidor y Caddy sacará el certificado HTTPS automáticamente.
+El proyecto en Cloudflare se crea solo la primera vez.
 
-## Copias de seguridad
+## Poner el dominio del cliente
 
-Las webs ya quedan guardadas en git. Para n8n (flujos y credenciales) programa el backup diario en el servidor:
+En Cloudflare → *Workers & Pages* → el proyecto → *Custom domains → Set up a domain*.
 
-```bash
-crontab -e
-0 3 * * * /opt/agencia/scripts/backup.sh
-```
+- Si el dominio está gestionado en Cloudflare (gratis, recomendado), se configura con un clic.
+- Si está en otro proveedor, crea un registro **CNAME** de `www` apuntando a `<cliente>.pages.dev`.
 
-Guarda los backups en `/opt/agencia/backups/` (14 días). Conviene copiarlos también fuera del servidor (o activar los snapshots del proveedor del VPS).
+## Límites del plan gratuito
 
-## Comandos útiles en el servidor
-
-```bash
-cd /opt/agencia
-docker compose ps                 # estado
-docker compose logs -f caddy      # ver errores de certificados / dominios
-docker compose pull && docker compose up -d   # actualizar n8n y Caddy
-```
+- 500 publicaciones al mes (sumando todas las webs).
+- Archivos de hasta 25 MB y 20.000 archivos por web.
+- Pensado para webs estáticas (HTML/CSS/JS, o generadas con Astro, Vite, etc.).
