@@ -46,6 +46,7 @@ En Cloudflare → *Workers & Pages* → el proyecto → *Custom domains → Set 
 
 ## Límites del plan gratuito
 
-- 500 publicaciones al mes (sumando todas las webs).
+- Unas 100 webs (proyectos) por cuenta; es un límite flexible que Cloudflare puede ampliar si se lo pides.
+- Hasta 100 dominios propios por web.
 - Archivos de hasta 25 MB y 20.000 archivos por web.
 - Pensado para webs estáticas (HTML/CSS/JS, o generadas con Astro, Vite, etc.).
