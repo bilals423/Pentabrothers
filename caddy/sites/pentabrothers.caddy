@@ -1,0 +1,4 @@
+# Cliente: Penta Brothers — cambia el dominio por el real
+pentabrothers.tuagencia.com {
+	import web_estatica pentabrothers
+}
