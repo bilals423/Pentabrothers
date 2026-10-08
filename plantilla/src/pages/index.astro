@@ -1,0 +1,34 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../config';
+
+const servicios = [
+  { titulo: 'Servicio 1', texto: 'Explica el beneficio para el cliente, no solo lo que haces.' },
+  { titulo: 'Servicio 2', texto: 'Usa las palabras que tus clientes buscarían en Google.' },
+  { titulo: 'Servicio 3', texto: 'Si un servicio es importante, merece su propia página.' },
+];
+---
+<Base>
+  <section class="seccion">
+    <div class="contenedor">
+      <!-- Un solo h1 por página, con la palabra clave principal -->
+      <h1>Titular principal con lo que hace el negocio y dónde</h1>
+      <p>{SITE.descripcion}</p>
+      <a class="boton" href="/contacto">Pide información</a>
+    </div>
+  </section>
+
+  <section class="seccion seccion--alt">
+    <div class="contenedor">
+      <h2>Servicios</h2>
+      <div class="rejilla">
+        {servicios.map((s) => (
+          <article class="tarjeta">
+            <h3>{s.titulo}</h3>
+            <p>{s.texto}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>

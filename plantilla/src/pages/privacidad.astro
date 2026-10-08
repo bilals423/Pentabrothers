@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../config';
+---
+<Base titulo="Política de privacidad" noindex>
+  <section class="seccion">
+    <div class="contenedor legal">
+      <h1>Política de privacidad</h1>
+      <p><strong>Responsable:</strong> {SITE.legal.titular} ({SITE.legal.nif}) — {SITE.contacto.email}</p>
+      <p><strong>Finalidad:</strong> responder a las consultas enviadas mediante el formulario de contacto.</p>
+      <p><strong>Legitimación:</strong> consentimiento del interesado al enviar el formulario.</p>
+      <p><strong>Conservación:</strong> el tiempo necesario para atender la consulta.</p>
+      <p><strong>Destinatarios:</strong> no se ceden datos a terceros salvo obligación legal. Los datos se alojan en proveedores tecnológicos con garantías adecuadas.</p>
+      <p><strong>Derechos:</strong> puedes ejercer tus derechos de acceso, rectificación, supresión y demás escribiendo a {SITE.contacto.email}. También puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es).</p>
+      <p><strong>Cookies:</strong> esta web no utiliza cookies de seguimiento. Si se añaden (p. ej. Google Analytics), habrá que incluir un aviso de cookies.</p>
+      <p><em>Texto orientativo: revisa esta política con el cliente o un asesor legal.</em></p>
+    </div>
+  </section>
+</Base>

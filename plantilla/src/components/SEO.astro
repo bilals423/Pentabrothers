@@ -1,0 +1,55 @@
+---
+import { SITE } from '../config';
+
+interface Props {
+  titulo?: string;
+  descripcion?: string;
+  imagen?: string;
+  noindex?: boolean;
+}
+
+const { titulo, descripcion = SITE.descripcion, imagen = SITE.imagenOg, noindex = false } = Astro.props;
+const tituloCompleto = titulo ? `${titulo} | ${SITE.nombre}` : SITE.nombre;
+// Cloudflare sirve /contacto.html como /contacto: la URL canónica va sin .html
+const ruta = Astro.url.pathname.replace(/(index)?\.html$/, '');
+const canonical = new URL(ruta, SITE.url).href;
+const imagenUrl = new URL(imagen, SITE.url).href;
+
+const datosEstructurados = {
+  '@context': 'https://schema.org',
+  '@type': SITE.tipoNegocio,
+  name: SITE.nombre,
+  description: SITE.descripcion,
+  url: SITE.url,
+  image: imagenUrl,
+  email: SITE.contacto.email,
+  telephone: SITE.contacto.telefono,
+  ...(SITE.direccion.calle && {
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: SITE.direccion.calle,
+      addressLocality: SITE.direccion.ciudad,
+      postalCode: SITE.direccion.cp,
+      addressRegion: SITE.direccion.region,
+      addressCountry: SITE.direccion.pais,
+    },
+  }),
+  ...(SITE.redes.length && { sameAs: SITE.redes }),
+};
+---
+<title>{tituloCompleto}</title>
+<meta name="description" content={descripcion} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex" />}
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={SITE.nombre} />
+<meta property="og:title" content={tituloCompleto} />
+<meta property="og:description" content={descripcion} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={imagenUrl} />
+<meta property="og:locale" content={SITE.locale} />
+<meta name="twitter:card" content="summary_large_image" />
+
+<link rel="sitemap" href="/sitemap-index.xml" />
+<script type="application/ld+json" set:html={JSON.stringify(datosEstructurados)} />

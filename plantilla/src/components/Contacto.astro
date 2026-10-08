@@ -1,0 +1,61 @@
+---
+import { SITE } from '../config';
+// Si no hay Supabase configurado, el formulario abre el correo del visitante.
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL ?? '';
+const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? '';
+---
+<form class="formulario" id="form-contacto" data-url={supabaseUrl} data-key={supabaseKey} data-email={SITE.contacto.email}>
+  <label>Nombre <input name="nombre" required maxlength="120" autocomplete="name" /></label>
+  <label>Email <input name="email" type="email" required maxlength="200" autocomplete="email" /></label>
+  <label>Teléfono (opcional) <input name="telefono" type="tel" maxlength="40" autocomplete="tel" /></label>
+  <label>Mensaje <textarea name="mensaje" rows="5" required maxlength="5000"></textarea></label>
+  <!-- Campo trampa para bots: las personas no lo ven -->
+  <input class="trampa" name="web" tabindex="-1" autocomplete="off" aria-hidden="true" />
+  <label style="display:flex;gap:.5rem;font-weight:400">
+    <input type="checkbox" required /> <span>He leído y acepto la <a href="/privacidad">política de privacidad</a>.</span>
+  </label>
+  <button class="boton" type="submit">Enviar</button>
+  <p class="formulario__estado" role="status"></p>
+</form>
+
+<script>
+  const form = document.getElementById('form-contacto') as HTMLFormElement;
+  const estado = form.querySelector('.formulario__estado')!;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const datos = Object.fromEntries(new FormData(form)) as Record<string, string>;
+    if (datos.web) return; // bot
+    const { url, key, email } = form.dataset;
+
+    if (!url || !key) {
+      const cuerpo = encodeURIComponent(`${datos.mensaje}\n\n${datos.nombre} — ${datos.email} ${datos.telefono ?? ''}`);
+      location.href = `mailto:${email}?subject=${encodeURIComponent('Contacto desde la web')}&body=${cuerpo}`;
+      return;
+    }
+
+    const boton = form.querySelector('button')!;
+    boton.disabled = true;
+    estado.textContent = 'Enviando…';
+    try {
+      const r = await fetch(`${url}/rest/v1/contactos`, {
+        method: 'POST',
+        headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify({
+          web: location.hostname,
+          nombre: datos.nombre,
+          email: datos.email,
+          telefono: datos.telefono || null,
+          mensaje: datos.mensaje,
+        }),
+      });
+      if (!r.ok) throw new Error(String(r.status));
+      form.reset();
+      estado.textContent = '¡Gracias! Te responderemos lo antes posible.';
+    } catch {
+      estado.textContent = `No se pudo enviar. Escríbenos a ${email}.`;
+    } finally {
+      boton.disabled = false;
+    }
+  });
+</script>
