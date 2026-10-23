@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>EU Movil Control</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%232a78d6'/><rect x='10' y='5' width='12' height='22' rx='3' fill='none' stroke='white' stroke-width='2.5'/></svg>">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f4f4f2;
+  --surface: #fcfcfb;
+  --surface-2: #efeeeb;
+  --border: #dedcd6;
+  --text: #0b0b0b;
+  --text-2: #52514e;
+  --muted: #8a8984;
+  --accent: #2a78d6;
+  --series-1: #2a78d6;
+  --good: #1a7f37;
+  --bad: #c62828;
+  --warn: #9a6700;
+  --grid: #e6e4df;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #111110;
+    --surface: #1a1a19;
+    --surface-2: #242422;
+    --border: #33322f;
+    --text: #f0efec;
+    --text-2: #c3c2b7;
+    --muted: #8f8e88;
+    --accent: #3987e5;
+    --series-1: #3987e5;
+    --good: #4ac26b;
+    --bad: #ff6b6b;
+    --warn: #e3b341;
+    --grid: #2a2a28;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #111110; --surface: #1a1a19; --surface-2: #242422; --border: #33322f;
+  --text: #f0efec; --text-2: #c3c2b7; --muted: #8f8e88; --accent: #3987e5; --series-1: #3987e5;
+  --good: #4ac26b; --bad: #ff6b6b; --warn: #e3b341; --grid: #2a2a28;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+button, input, select { font: inherit; color: inherit; }
+.hidden { display: none !important; }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 16px; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* Login */
+.login { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
+.login form { width: 100%; max-width: 340px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; display: grid; gap: 12px; }
+.login h1 { margin: 0 0 4px; font-size: 20px; }
+.login p { margin: 0; color: var(--text-2); }
+input[type=email], input[type=password], input[type=search], input[type=date], select {
+  width: 100%; padding: 9px 11px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+.btn { padding: 9px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+.btn.link { border: 0; background: none; color: var(--accent); padding: 0; }
+.msg { font-size: 13px; color: var(--text-2); min-height: 1em; }
+.msg.err { color: var(--bad); }
+
+/* Cabecera */
+@media (max-width: 600px) { header { position: static !important; } .brand { width: 100%; } }
+header { position: sticky; top: 0; z-index: 5; background: var(--surface); border-bottom: 1px solid var(--border); }
+header .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding-top: 10px; padding-bottom: 10px; }
+.brand { font-weight: 700; font-size: 16px; margin-right: auto; }
+.seg { display: inline-flex; background: var(--surface-2); border-radius: 9px; padding: 3px; }
+.seg button { border: 0; background: none; padding: 6px 12px; border-radius: 7px; cursor: pointer; color: var(--text-2); white-space: nowrap; }
+.seg button[aria-pressed=true] { background: var(--surface); color: var(--text); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.sync { font-size: 12px; color: var(--text-2); display: flex; align-items: center; gap: 6px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+.dot.ok { background: var(--good); } .dot.bad { background: var(--bad); } .dot.old { background: var(--warn); }
+
+/* KPIs */
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-2); margin: 22px 0 10px; font-weight: 600; }
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 860px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+.kpi .l { font-size: 12px; color: var(--text-2); }
+.kpi .v { font-size: 22px; font-weight: 700; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kpi .s { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.up { color: var(--good); } .down { color: var(--bad); }
+
+/* Tarjetas y gráficos */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+.card-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.card-h h3 { margin: 0; font-size: 15px; }
+.grid2 { display: grid; grid-template-columns: 3fr 2fr; gap: 10px; }
+@media (max-width: 860px) { .grid2 { grid-template-columns: 1fr; } }
+.chart { position: relative; }
+.chart svg { display: block; width: 100%; height: 220px; overflow: visible; }
+.chart .bar { fill: var(--series-1); }
+.chart .bar.dim { opacity: .35; }
+.chart .hit { fill: transparent; cursor: default; }
+.chart .ax { fill: var(--muted); font-size: 11px; }
+.chart .gl { stroke: var(--grid); stroke-width: 1; }
+.tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 7px 9px; font-size: 12px; box-shadow: 0 4px 14px rgba(0,0,0,.15); white-space: nowrap; z-index: 2; }
+.tip b { display: block; margin-bottom: 2px; }
+
+/* Pestañas y tablas */
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin: 22px 0 0; overflow-x: auto; }
+.tabs button { border: 0; background: none; padding: 9px 14px; cursor: pointer; color: var(--text-2); border-bottom: 2px solid transparent; white-space: nowrap; }
+.tabs button[aria-selected=true] { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
+.panel { background: var(--surface); border: 1px solid var(--border); border-top: 0; border-radius: 0 0 10px 10px; padding: 14px; }
+.tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+.tools input[type=search] { flex: 1 1 220px; width: auto; }
+.tools input[type=date], .tools select { width: auto; }
+.tools .sum { margin-left: auto; color: var(--text-2); font-size: 13px; }
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+th { font-size: 12px; color: var(--text-2); font-weight: 600; position: sticky; top: 0; background: var(--surface); cursor: pointer; user-select: none; }
+td.r, th.r { text-align: right; }
+td.name { white-space: normal; min-width: 200px; }
+td.sub { color: var(--muted); font-size: 12px; }
+tr:hover td { background: var(--surface-2); }
+.tag { display: inline-block; padding: 1px 7px; border-radius: 10px; background: var(--surface-2); font-size: 12px; color: var(--text-2); }
+.empty { color: var(--muted); padding: 20px 0; text-align: center; }
+footer { color: var(--muted); font-size: 12px; text-align: center; padding: 24px 0; }
+</style>
+</head>
+<body>
+
+<!-- Acceso -->
+<section id="login" class="login hidden">
+  <form id="loginForm" autocomplete="on">
+    <h1>EU Movil Control</h1>
+    <p id="loginHint">Entra con tu correo y contraseña.</p>
+    <input type="email" id="email" placeholder="Correo" required autocomplete="username">
+    <input type="password" id="password" placeholder="Contraseña" required minlength="8" autocomplete="current-password">
+    <button class="btn primary" type="submit" id="loginBtn">Entrar</button>
+    <button class="btn link" type="button" id="toggleMode">Primera vez: crear cuenta</button>
+    <div class="msg" id="loginMsg"></div>
+  </form>
+</section>
+
+<!-- Sin permiso -->
+<section id="noaccess" class="login hidden">
+  <div class="card" style="max-width:380px">
+    <h3 style="margin-top:0">Cuenta creada</h3>
+    <p>Tu usuario <b id="noaccessEmail"></b> todavía no tiene acceso al panel. En cuanto se active, recarga esta página.</p>
+    <button class="btn" id="logout2">Salir</button>
+  </div>
+</section>
+
+<!-- Panel -->
+<div id="app" class="hidden">
+  <header>
+    <div class="wrap">
+      <div class="brand">EU Movil Control</div>
+      <div class="seg" role="group" aria-label="Negocio">
+        <button data-biz="" aria-pressed="true">Todo</button>
+        <button data-biz="moviles" aria-pressed="false">Móviles</button>
+        <button data-biz="marca" aria-pressed="false">Mi marca</button>
+      </div>
+      <div class="sync" id="sync" title=""><span class="dot"></span><span>—</span></div>
+      <button class="btn" id="refresh" title="Actualizar">↻</button>
+      <button class="btn" id="logout">Salir</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h2 id="hoyTitle">Hoy</h2>
+    <div class="kpis">
+      <div class="kpi"><div class="l">Ventas hoy</div><div class="v num" id="k_hoy_v">—</div><div class="s" id="k_hoy_vs"></div></div>
+      <div class="kpi"><div class="l">Beneficio hoy</div><div class="v num" id="k_hoy_b">—</div><div class="s" id="k_hoy_bs"></div></div>
+      <div class="kpi"><div class="l">Salidas hoy (uds vendidas)</div><div class="v num" id="k_hoy_u">—</div><div class="s" id="k_hoy_us"></div></div>
+      <div class="kpi"><div class="l">Entradas hoy (uds nuevas)</div><div class="v num" id="k_ent">—</div><div class="s" id="k_dev_hoy"></div></div>
+    </div>
+
+    <h2>Este mes</h2>
+    <div class="kpis">
+      <div class="kpi"><div class="l">Ventas del mes</div><div class="v num" id="k_mes_v">—</div><div class="s" id="k_mes_vs"></div></div>
+      <div class="kpi"><div class="l">Beneficio del mes</div><div class="v num" id="k_mes_b">—</div><div class="s" id="k_mes_bs"></div></div>
+      <div class="kpi"><div class="l">Devoluciones del mes</div><div class="v num" id="k_mes_d">—</div><div class="s" id="k_mes_ds"></div></div>
+      <div class="kpi"><div class="l">Stock en vivo</div><div class="v num" id="k_stk">—</div><div class="s" id="k_stks"></div></div>
+    </div>
+
+    <h2>Evolución</h2>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-h"><h3>Ventas · últimos 30 días</h3></div>
+        <div class="chart" id="chDaily"></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>Ventas · últimos 12 meses</h3></div>
+        <div class="chart" id="chMonthly"></div>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button role="tab" data-tab="ventas" aria-selected="true">Ventas por día</button>
+      <button role="tab" data-tab="stock" aria-selected="false">Stock en vivo</button>
+      <button role="tab" data-tab="top" aria-selected="false">Top del mes</button>
+      <button role="tab" data-tab="hist" aria-selected="false">Histórico mensual</button>
+    </div>
+
+    <div class="panel" id="tab-ventas">
+      <div class="tools">
+        <button class="btn" id="dPrev" title="Día anterior">‹</button>
+        <input type="date" id="day">
+        <button class="btn" id="dNext" title="Día siguiente">›</button>
+        <input type="search" id="qSales" placeholder="Buscar producto o IMEI…">
+        <span class="sum num" id="salesSum"></span>
+      </div>
+      <div class="tbl-wrap"><table id="tSales"></table></div>
+    </div>
+
+    <div class="panel hidden" id="tab-stock">
+      <div class="tools">
+        <input type="search" id="qStock" placeholder="Buscar producto, IMEI o SKU…">
+        <select id="fCond"><option value="">Todos los estados</option></select>
+        <span class="sum num" id="stockSum"></span>
+      </div>
+      <div class="tbl-wrap"><table id="tStock"></table></div>
+    </div>
+
+    <div class="panel hidden" id="tab-top">
+      <div class="tbl-wrap"><table id="tTop"></table></div>
+    </div>
+
+    <div class="panel hidden" id="tab-hist">
+      <div class="tbl-wrap"><table id="tHist"></table></div>
+    </div>
+  </main>
+  <footer>Datos de SDS TPV, sincronizados cada hora (9–21 h, lun–sáb). El panel se actualiza solo cada 5 minutos.</footer>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://jaltijjlgmeduiktbqzc.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_pvWUANQmmpqkrj32MWekSw_kjwe9sFA';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const TZ = 'Europe/Madrid';
+
+const $ = (id) => document.getElementById(id);
+const eur = (n, d = 0) => (+n || 0).toLocaleString('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: d, minimumFractionDigits: d, useGrouping: 'always' });
+const int = (n) => (+n || 0).toLocaleString('es-ES', { useGrouping: 'always' });
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const madridDate = (d = new Date()) => d.toLocaleDateString('sv-SE', { timeZone: TZ });
+const madridTime = (iso) => new Date(iso).toLocaleTimeString('es-ES', { timeZone: TZ, hour: '2-digit', minute: '2-digit' });
+const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+
+// Medianoche de Madrid de 'YYYY-MM-DD' en ISO UTC
+function madridMidnight(day) {
+  const [y, m, d] = day.split('-').map(Number);
+  const guess = Date.UTC(y, m - 1, d);
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: TZ, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
+    .formatToParts(new Date(guess)).map((x) => [x.type, x.value]));
+  const shown = Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute);
+  return new Date(guess - (shown - guess)).toISOString();
+}
+function addDays(day, n) {
+  const d = new Date(day + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+function pct(a, b) {
+  if (!b) return '';
+  const p = (a - b) / Math.abs(b) * 100;
+  return `<span class="${p >= 0 ? 'up' : 'down'}">${p >= 0 ? '▲' : '▼'} ${Math.abs(p).toFixed(0)} %</span>`;
+}
+
+const state = { biz: '', day: madridDate(), sales: [], stock: [], dash: null, sort: {} };
+
+/* ---------- Acceso ---------- */
+let signup = false;
+$('toggleMode').onclick = () => {
+  signup = !signup;
+  $('loginBtn').textContent = signup ? 'Crear cuenta' : 'Entrar';
+  $('toggleMode').textContent = signup ? 'Ya tengo cuenta: entrar' : 'Primera vez: crear cuenta';
+  $('loginHint').textContent = signup ? 'Elige una contraseña de al menos 8 caracteres.' : 'Entra con tu correo y contraseña.';
+  $('password').autocomplete = signup ? 'new-password' : 'current-password';
+};
+$('loginForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const email = $('email').value.trim(), password = $('password').value;
+  $('loginMsg').className = 'msg'; $('loginMsg').textContent = '…';
+  const { data, error } = signup
+    ? await sb.auth.signUp({ email, password })
+    : await sb.auth.signInWithPassword({ email, password });
+  if (error) {
+    $('loginMsg').className = 'msg err';
+    $('loginMsg').textContent = /Invalid login/i.test(error.message) ? 'Correo o contraseña incorrectos.'
+      : /not confirmed/i.test(error.message) ? 'Cuenta creada pero aún sin activar.' : error.message;
+    return;
+  }
+  if (signup && !data.session) {
+    $('loginMsg').textContent = 'Cuenta creada. Queda pendiente de activar; después podrás entrar.';
+    return;
+  }
+  start();
+};
+async function logout() { await sb.auth.signOut(); location.reload(); }
+$('logout').onclick = logout; $('logout2').onclick = logout;
+
+function show(id) { for (const s of ['login', 'noaccess', 'app']) $(s).classList.toggle('hidden', s !== id); }
+
+async function start() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return show('login');
+  const ok = await loadDash();
+  if (!ok) { $('noaccessEmail').textContent = session.user.email; return show('noaccess'); }
+  show('app');
+  document.querySelectorAll('.chart').forEach((h) => h._args && barChart(h, ...h._args));
+  loadSales(); loadStock();
+}
+
+/* ---------- Resumen ---------- */
+async function loadDash() {
+  const { data, error } = await sb.rpc('dashboard', { p_business: state.biz || null });
+  if (error) { if (/autorizado|permission/i.test(error.message)) return false; console.error(error); return true; }
+  state.dash = data;
+  renderDash();
+  return true;
+}
+
+function renderDash() {
+  const d = state.dash;
+  $('hoyTitle').textContent = 'Hoy · ' + new Date(d.today + 'T12:00:00Z').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+  $('k_hoy_v').textContent = eur(d.hoy.ventas);
+  $('k_hoy_vs').innerHTML = `Ayer ${eur(d.ayer.ventas)}`;
+  $('k_hoy_b').textContent = eur(d.hoy.beneficio);
+  $('k_hoy_bs').innerHTML = `Ayer ${eur(d.ayer.beneficio)}`;
+  $('k_hoy_u').textContent = int(d.hoy.uds);
+  $('k_hoy_us').textContent = `Ayer ${int(d.ayer.uds)}`;
+  $('k_ent').textContent = int(d.entradas_hoy);
+  $('k_dev_hoy').textContent = d.devol_hoy ? `Devoluciones hoy ${eur(d.devol_hoy)}` : 'Sin devoluciones hoy';
+  $('k_mes_v').textContent = eur(d.mes.ventas);
+  $('k_mes_vs').innerHTML = `${pct(d.mes.ventas, d.mes_ant.ventas)} vs mismo periodo mes anterior`;
+  $('k_mes_b').textContent = eur(d.mes.beneficio);
+  const marg = d.mes.ventas ? (d.mes.beneficio / d.mes.ventas * 100).toFixed(1) : 0;
+  $('k_mes_bs').innerHTML = `Margen ${marg} % · ${pct(d.mes.beneficio, d.mes_ant.beneficio)}`;
+  $('k_mes_d').textContent = eur(d.devol_mes);
+  $('k_mes_ds').textContent = `Neto ${eur(d.mes.ventas - d.devol_mes)}`;
+  $('k_stk').textContent = int(d.stock.uds) + ' uds';
+  $('k_stks').textContent = `Coste ${eur(d.stock.coste)} · PVP ${eur(d.stock.venta)}`;
+
+  // Estado de la sincronización
+  const s = d.sync, el = $('sync');
+  if (s) {
+    const mins = (Date.now() - new Date(s.at)) / 60e3;
+    el.querySelector('.dot').className = 'dot ' + (!s.ok ? 'bad' : mins > 90 ? 'old' : 'ok');
+    el.lastElementChild.textContent = (s.ok ? 'Sincronizado ' : 'Error de sincronización ') + madridTime(s.at);
+    el.title = s.msg || '';
+  }
+
+  barChart($('chDaily'), d.diario.map((x) => ({
+    k: x.d, label: +x.d.slice(8), v: +x.ventas,
+    tip: `<b>${new Date(x.d + 'T12:00:00Z').toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })}</b>Ventas ${eur(x.ventas)}<br>Beneficio ${eur(x.beneficio)}<br>${int(x.uds)} uds`,
+  })), { every: 5, onClick: (k) => { state.day = k; switchTab('ventas'); loadSales(); } });
+  barChart($('chMonthly'), d.mensual.map((x) => ({
+    k: x.m, label: MESES[+x.m.slice(5) - 1], v: +x.ventas,
+    tip: `<b>${MESES[+x.m.slice(5) - 1]} ${x.m.slice(0, 4)}</b>Ventas ${eur(x.ventas)}<br>Beneficio ${eur(x.beneficio)}<br>Devoluciones ${eur(x.devol)}<br>${int(x.uds)} uds`,
+  })), { every: 1 });
+
+  table($('tTop'), [
+    { h: 'Producto', f: (r) => r.nombre, cls: 'name' },
+    { h: 'Uds', f: (r) => int(r.uds), v: (r) => +r.uds, cls: 'r' },
+    { h: 'Ventas', f: (r) => eur(r.ventas), v: (r) => +r.ventas, cls: 'r' },
+    { h: 'Beneficio', f: (r) => eur(r.beneficio), v: (r) => +r.beneficio, cls: 'r' },
+  ], d.top_mes, 'top');
+  table($('tHist'), [
+    { h: 'Mes', f: (r) => `${MESES[+r.m.slice(5) - 1]} ${r.m.slice(0, 4)}`, v: (r) => r.m },
+    { h: 'Ventas', f: (r) => eur(r.ventas), v: (r) => +r.ventas, cls: 'r' },
+    { h: 'Beneficio', f: (r) => eur(r.beneficio), v: (r) => +r.beneficio, cls: 'r' },
+    { h: 'Margen', f: (r) => r.ventas ? (r.beneficio / r.ventas * 100).toFixed(1) + ' %' : '—', v: (r) => r.ventas ? r.beneficio / r.ventas : 0, cls: 'r' },
+    { h: 'Devoluciones', f: (r) => eur(r.devol), v: (r) => +r.devol, cls: 'r' },
+    { h: 'Uds', f: (r) => int(r.uds), v: (r) => +r.uds, cls: 'r' },
+  ], [...d.mensual].reverse().filter((r) => +r.ventas || +r.devol), 'hist');
+}
+
+/* ---------- Gráfico de barras (una serie, tooltip por barra) ---------- */
+function barChart(host, rows, opt = {}) {
+  host._args = [rows, opt];
+  const W = Math.max(280, host.clientWidth || 600), H = 220, L = 40, B = 22, T = 8;
+  const max = Math.max(1, ...rows.map((r) => r.v));
+  const step = niceStep(max / 4), top = Math.ceil(max / step) * step;
+  const bw = (W - L) / rows.length, gap = Math.min(2, bw * 0.2) + bw * 0.12;
+  const y = (v) => T + (H - T - B) * (1 - v / top);
+  let g = '';
+  for (let v = 0; v <= top + 1e-9; v += step) {
+    g += `<line class="gl" x1="${L}" x2="${W}" y1="${y(v)}" y2="${y(v)}"/><text class="ax" x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${short(v)}</text>`;
+  }
+  rows.forEach((r, i) => {
+    const x = L + i * bw + gap / 2, w = Math.max(1, bw - gap), h = Math.max(0, y(0) - y(r.v)), rad = Math.min(4, w / 2, h);
+    if (h > 0) g += `<path class="bar" data-i="${i}" d="M${x},${y(0)} V${y(r.v) + rad} q0,${-rad} ${rad},${-rad} H${x + w - rad} q${rad},0 ${rad},${rad} V${y(0)} Z"/>`;
+    if (i % (opt.every || 1) === 0 || i === rows.length - 1) g += `<text class="ax" x="${x + w / 2}" y="${H - 6}" text-anchor="middle">${r.label}</text>`;
+    g += `<rect class="hit" data-i="${i}" x="${L + i * bw}" y="${T}" width="${bw}" height="${H - T - B}"${opt.onClick ? ' style="cursor:pointer"' : ''}/>`;
+  });
+  host.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img">${g}</svg><div class="tip hidden"></div>`;
+  const tip = host.querySelector('.tip'), svg = host.querySelector('svg');
+  const bars = [...svg.querySelectorAll('.bar')];
+  svg.querySelectorAll('.hit').forEach((h) => {
+    const i = +h.dataset.i;
+    h.onmouseenter = h.onfocus = () => {
+      bars.forEach((b) => b.classList.toggle('dim', +b.dataset.i !== i));
+      tip.innerHTML = rows[i].tip; tip.classList.remove('hidden');
+      const hb = h.getBoundingClientRect(), cb = host.getBoundingClientRect();
+      let left = hb.left - cb.left + hb.width / 2 - tip.offsetWidth / 2;
+      left = Math.max(0, Math.min(cb.width - tip.offsetWidth, left));
+      tip.style.left = left + 'px'; tip.style.top = '-6px';
+    };
+    h.onmouseleave = () => { bars.forEach((b) => b.classList.remove('dim')); tip.classList.add('hidden'); };
+    if (opt.onClick) h.onclick = () => opt.onClick(rows[i].k);
+  });
+}
+let rsz;
+window.addEventListener('resize', () => { clearTimeout(rsz); rsz = setTimeout(() => document.querySelectorAll('.chart').forEach((h) => h._args && barChart(h, ...h._args)), 150); });
+function niceStep(x) { const p = 10 ** Math.floor(Math.log10(x || 1)); const n = x / p; return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10) * p; }
+function short(v) { return v >= 1000 ? (v / 1000).toLocaleString('es-ES', { maximumFractionDigits: 1 }) + ' k' : String(v); }
+
+/* ---------- Tablas con orden por columna ---------- */
+function table(el, cols, rows, key) {
+  const s = state.sort[key];
+  if (s) {
+    const c = cols[s.i], val = c.v || c.f;
+    rows = [...rows].sort((a, b) => { const x = val(a), y = val(b); return (x > y ? 1 : x < y ? -1 : 0) * s.dir; });
+  }
+  if (!rows.length) { el.innerHTML = '<tr><td class="empty">Sin datos</td></tr>'; return; }
+  el.innerHTML = `<thead><tr>${cols.map((c, i) => `<th class="${c.cls === 'r' ? 'r' : ''}" data-i="${i}">${c.h}${s && s.i === i ? (s.dir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('')}</tr></thead>` +
+    `<tbody>${rows.map((r) => `<tr>${cols.map((c) => `<td class="${c.cls || ''}">${c.html ? c.html(r) : esc(c.f(r))}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  el.querySelectorAll('th').forEach((th) => th.onclick = () => {
+    const i = +th.dataset.i, cur = state.sort[key];
+    state.sort[key] = { i, dir: cur && cur.i === i ? -cur.dir : (cols[i].cls === 'r' ? -1 : 1) };
+    table(el, cols, rows, key);
+  });
+}
+
+/* ---------- Ventas por día ---------- */
+async function loadSales() {
+  $('day').value = state.day;
+  let q = sb.from('sales').select('sale_date,sale_number,product_name,serial_sku,quantity,unit_sale,unit_buy,profit,payment_types,condition,business,category')
+    .gte('sale_date', madridMidnight(state.day)).lt('sale_date', madridMidnight(addDays(state.day, 1)))
+    .order('sale_date', { ascending: false }).limit(2000);
+  if (state.biz) q = q.eq('business', state.biz);
+  const { data, error } = await q;
+  if (error) return console.error(error);
+  state.sales = data;
+  renderSales();
+}
+function renderSales() {
+  const q = $('qSales').value.trim().toLowerCase();
+  const rows = state.sales.filter((r) => !q || `${r.product_name} ${r.serial_sku} ${r.sale_number}`.toLowerCase().includes(q));
+  const tot = rows.reduce((a, r) => (a.v += r.unit_sale * r.quantity, a.b += +r.profit, a.u += r.quantity, a), { v: 0, b: 0, u: 0 });
+  $('salesSum').innerHTML = `${int(tot.u)} uds · ${eur(tot.v)} · beneficio ${eur(tot.b)}`;
+  table($('tSales'), [
+    { h: 'Hora', f: (r) => madridTime(r.sale_date), v: (r) => r.sale_date },
+    { h: 'Producto', html: (r) => `${esc(r.product_name)}${r.condition ? ` <span class="tag">${esc(r.condition)}</span>` : ''}`, f: (r) => r.product_name, cls: 'name' },
+    { h: 'IMEI / SKU', f: (r) => r.serial_sku || '', cls: 'sub' },
+    { h: 'Uds', f: (r) => int(r.quantity), v: (r) => r.quantity, cls: 'r' },
+    { h: 'Venta', f: (r) => eur(r.unit_sale * r.quantity, 2), v: (r) => r.unit_sale * r.quantity, cls: 'r' },
+    { h: 'Beneficio', f: (r) => eur(r.profit, 2), v: (r) => +r.profit, cls: 'r' },
+    { h: 'Pago', f: (r) => r.payment_types || '', cls: 'sub' },
+    { h: 'Nº venta', f: (r) => r.sale_number || '', cls: 'sub' },
+  ], rows, 'sales');
+}
+$('day').onchange = () => { if ($('day').value) { state.day = $('day').value; loadSales(); } };
+$('dPrev').onclick = () => { state.day = addDays(state.day, -1); loadSales(); };
+$('dNext').onclick = () => { state.day = addDays(state.day, 1); loadSales(); };
+$('qSales').oninput = renderSales;
+
+/* ---------- Stock en vivo ---------- */
+async function loadStock() {
+  let q = sb.from('stock_items').select('name,category,condition,quantity,buy_price,sale_price,sku_serial,battery_notes,product_type,business,first_seen_at')
+    .eq('in_stock', true).order('name').limit(5000);
+  if (state.biz) q = q.eq('business', state.biz);
+  const { data, error } = await q;
+  if (error) return console.error(error);
+  state.stock = data;
+  const conds = [...new Set(data.map((r) => r.condition).filter(Boolean))].sort();
+  const cur = $('fCond').value;
+  $('fCond').innerHTML = '<option value="">Todos los estados</option>' + conds.map((c) => `<option${c === cur ? ' selected' : ''}>${esc(c)}</option>`).join('');
+  renderStock();
+}
+function renderStock() {
+  const q = $('qStock').value.trim().toLowerCase(), c = $('fCond').value;
+  const rows = state.stock.filter((r) => (!c || r.condition === c) && (!q || `${r.name} ${r.sku_serial} ${r.category}`.toLowerCase().includes(q)));
+  const tot = rows.reduce((a, r) => (a.u += r.quantity, a.c += r.quantity * r.buy_price, a.v += r.quantity * r.sale_price, a), { u: 0, c: 0, v: 0 });
+  $('stockSum').innerHTML = `${int(tot.u)} uds · coste ${eur(tot.c)} · PVP ${eur(tot.v)}`;
+  table($('tStock'), [
+    { h: 'Producto', html: (r) => `${esc(r.name)}${r.category ? ` <span class="tag">${esc(r.category)}</span>` : ''}`, f: (r) => r.name, cls: 'name' },
+    { h: 'Estado', f: (r) => r.condition || '' },
+    { h: 'IMEI / SKU', f: (r) => r.sku_serial || '', cls: 'sub' },
+    { h: 'Batería / notas', f: (r) => r.battery_notes || '', cls: 'sub' },
+    { h: 'Uds', f: (r) => int(r.quantity), v: (r) => r.quantity, cls: 'r' },
+    { h: 'Compra', f: (r) => eur(r.buy_price, 2), v: (r) => +r.buy_price, cls: 'r' },
+    { h: 'Venta', f: (r) => eur(r.sale_price, 2), v: (r) => +r.sale_price, cls: 'r' },
+    { h: 'Entró', f: (r) => new Date(r.first_seen_at).toLocaleDateString('es-ES', { timeZone: TZ }), v: (r) => r.first_seen_at, cls: 'sub' },
+  ], rows, 'stock');
+}
+$('qStock').oninput = renderStock;
+$('fCond').onchange = renderStock;
+
+/* ---------- Pestañas, selector de negocio, refresco ---------- */
+function switchTab(t) {
+  document.querySelectorAll('.tabs button').forEach((b) => b.setAttribute('aria-selected', b.dataset.tab === t));
+  for (const p of ['ventas', 'stock', 'top', 'hist']) $('tab-' + p).classList.toggle('hidden', p !== t);
+}
+document.querySelectorAll('.tabs button').forEach((b) => b.onclick = () => switchTab(b.dataset.tab));
+document.querySelectorAll('.seg button').forEach((b) => b.onclick = () => {
+  state.biz = b.dataset.biz;
+  try { localStorage.setItem('eumovil_biz', state.biz); } catch {}
+  document.querySelectorAll('.seg button').forEach((x) => x.setAttribute('aria-pressed', x === b));
+  refreshAll();
+});
+function refreshAll() { loadDash(); loadSales(); loadStock(); }
+$('refresh').onclick = refreshAll;
+setInterval(() => { if (!$('app').classList.contains('hidden') && !document.hidden) refreshAll(); }, 5 * 60e3);
+
+try {
+  const saved = localStorage.getItem('eumovil_biz');
+  if (saved !== null) { state.biz = saved; document.querySelectorAll('.seg button').forEach((x) => x.setAttribute('aria-pressed', x.dataset.biz === saved)); }
+} catch {}
+start();
+</script>
+</body>
+</html>
